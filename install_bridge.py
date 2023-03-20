@@ -17,7 +17,7 @@ required_daemon = ['docker',
 
 config_files = ['bridge.yaml', 'bsn.yaml', 'hmy.yaml', 'solana.yaml']
 
-networks = ['mainnet', 'testnet1', 'testnet2', 'your own choice']
+networks = ['prod', 'idiv1', 'dev2', 'your own choice']
 
 def _exit(msg, code):
     print(f"{msg}\nexit code {code}")
@@ -502,7 +502,7 @@ supported software:
               f"------------------------------------------\n"
               f"{node_key}\n"
               f"------------------------------------------\n"
-              f"Now you need to top up your balance in the following networks: fantom testnet.\n"
+              f"Now you need to top up your balance in the following networks: fantom, testnet.\n"
               f"Token EYWA (at current time you can get token EYWA by request to tech team)\n"
               f"And press enter to continue...")
 
