@@ -256,7 +256,8 @@ class Facts:
     def get_bridge_init_command(self):
         init_command = f"docker run -l bridge -t --rm " \
                        f"--name {self.node_name} " \
-                       f"--network host " \
+                       f"-p 8081:8081 " \
+                       f"-p 10300:10300 " \
                        f"-e NTP_RETRY={self.ntp} " \
                        f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
                        f"-v {self.app_dir}/.data/keys/:/keys " \
@@ -271,7 +272,8 @@ class Facts:
     def get_bridge_reg_command(self):
         reg_command = f"docker run -l bridge -t --rm " \
                       f"--name {self.node_name} " \
-                      f"--network host " \
+                      f"-p 8081:8081 " \
+                      f"-p 10300:10300 " \
                       f"-e NTP_RETRY={self.ntp} " \
                       f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
                       f"-v {self.app_dir}/.data/keys/:/keys " \
@@ -287,7 +289,8 @@ class Facts:
         if self.loki_addr:
           run_command = f"docker run -l bridge -d " \
                         f"--name {self.node_name} " \
-                        f"--network host " \
+                        f"-p 8081:8081 " \
+                        f"-p 10300:10300 " \
                         f"-e NTP_RETRY={self.ntp} " \
                         f"-e PROM_LISTEN_PORT={self.prometheus_port} " \
                         f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
@@ -304,7 +307,8 @@ class Facts:
         else:
           run_command = f"docker run -l bridge -d " \
                         f"--name {self.node_name} " \
-                        f"--network host " \
+                        f"-p 8081:8081 " \
+                        f"-p 10300:10300 " \
                         f"-e NTP_RETRY={self.ntp} " \
                         f"-e PROM_LISTEN_PORT={self.prometheus_port} " \
                         f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
