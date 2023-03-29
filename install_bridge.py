@@ -256,6 +256,7 @@ class Facts:
     def get_bridge_init_command(self):
         init_command = f"docker run -l bridge -t --rm " \
                        f"--name {self.node_name} " \
+                       f"-h {self.node_name} " \
                        f"-p 8081:8081 " \
                        f"-p 10300:10300 " \
                        f"-e NTP_RETRY={self.ntp} " \
@@ -271,6 +272,7 @@ class Facts:
     @property
     def get_bridge_reg_command(self):
         reg_command = f"docker run -l bridge -t --rm " \
+                      f"-h {self.node_name} " \
                       f"--name {self.node_name} " \
                       f"-p 8081:8081 " \
                       f"-p 10300:10300 " \
@@ -289,6 +291,7 @@ class Facts:
         if self.loki_addr:
           run_command = f"docker run -l bridge -d " \
                         f"--name {self.node_name} " \
+                        f"-h {self.node_name} " \
                         f"-p 8081:8081 " \
                         f"-p 10300:10300 " \
                         f"-e NTP_RETRY={self.ntp} " \
@@ -307,6 +310,7 @@ class Facts:
         else:
           run_command = f"docker run -l bridge -d " \
                         f"--name {self.node_name} " \
+                        f"-h {self.node_name} " \
                         f"-p 8081:8081 " \
                         f"-p 10300:10300 " \
                         f"-e NTP_RETRY={self.ntp} " \
