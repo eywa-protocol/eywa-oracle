@@ -138,6 +138,7 @@ class Facts:
         self.missing_dependencies = []
         self.package_manager = False
         self.docker_install_command = False
+        self.timesyncd_install_command = False
         self.timesyncd_config_path = timesyncd_config_path
         self.app_dir = app_dir
         self.init_config_base_url = "https://bridge-configs.eywa.fi/"
@@ -236,9 +237,12 @@ class Facts:
         if self.get_dependencies["pacman"]:
             self.package_manager = 'pacman'
             self.docker_install_command = "pacman -Syy --noconfirm docker"
+            self.timesyncd_install_command = "pacman -Syy --noconfirm systemd"
+
         elif self.get_dependencies["apt"]:
             self.package_manager = 'apt'
             self.docker_install_command = "apt update; apt install -y docker.io"
+            self.timesyncd_install_command = "apt update; apt install -y systemd-timesyncd"
         else:
             self.package_manager = False
         del self.dependencies['pacman']
@@ -282,7 +286,7 @@ class Facts:
                       f"-v {self.app_dir}/.data/leveldb/{self.node_name}:/leveldb " \
                       f"-v {self.app_dir}/{self.node_name}:/app " \
                       f"{self.get_image} " \
-                      f"./bridge -verbosity 4 -register " \
+                      f"./bridge -verbosity 4 -register 1 " \
                       f"-cnf /app/bridge.yaml -sol-cnf /app/solana.yaml -hmy-cnf /app/hmy.yaml 2>&1 | grep ERROR"
         return reg_command
 
@@ -380,12 +384,14 @@ class Actions:
         # self.facts.missing_dependencies.append('docker')
         self.facts.check_dependencies
 
-        if 'docker' not in self.facts.missing_dependencies:
+        if 'docker' and '/usr/lib/systemd/systemd-timesyncd' not in self.facts.missing_dependencies:
             if self.facts.missing_dependencies:
                 _exit(f"missing dependencies: {' ,'.join(self.facts.missing_dependencies)}", 1)
-        else:
-            return self.install_docker()
-        return False
+        if 'docker' in self.facts.missing_dependencies:
+            self.install_docker()
+        if '/usr/lib/systemd/systemd-timesyncd' in self.facts.missing_dependencies:
+            self.install_timesyncd()
+        return True
 
     def install_docker(self):
         if not self.package_manager:
@@ -408,11 +414,32 @@ class Actions:
             _exit(f"\nDocker is not installed.\nYou can install docker manually and restart this script", 1)
         return True
 
+    def install_timesyncd(self):
+        if not self.package_manager:
+            _exit(f"\Timesyncd not installed and package manager unsupported.\n"
+                  f"Supported package manager: pacman, apt.\n"
+                  f"You can install timesyncd manually and restart this script\n", 1)
+
+        if automatic_install:
+            install = 'Y'
+        else:
+            install = input(f"Install systemd-timesyncd with command: {self.facts.timesyncd_install_command} (Y/n) ") or "Y"
+
+        while install != "Y" and install != "n":
+            install = input(f"Install systemd-timesyncd with command: {self.facts.timesyncd_install_command} (Y/n) ")
+
+        if install == "Y":
+            if system(self.facts.timesyncd_install_command) != 0:
+                _exit(f"Timesyncd install failed.\nCommand:\n{self.facts.timesyncd_install_command}\n", 1)
+        else:
+            _exit(f"\Timesyncd is not installed.\nYou can install timesyncd manually and restart this script", 1)
+        return True
+
     def get_config_files(self, files):
         for file in files:
             r = requests.get(f"{self.facts.init_config_base_url}/{self.facts.network_name}/{file}")
-            with open(f"{self.facts.get_app_dir}/{self.facts.get_node_name}/{file}", 'wb') as f:
-                f.write(r.content)
+            with open(f"{self.facts.get_app_dir}/{self.facts.get_node_name}/{file}", 'w') as f:
+                f.write(r.text)
 
     def init_bridge(self):
         new_key = subprocess.run(self.facts.get_bridge_init_command, stdout=subprocess.PIPE, shell=True)
