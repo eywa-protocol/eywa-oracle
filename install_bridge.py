@@ -384,9 +384,9 @@ class Actions:
         # self.facts.missing_dependencies.append('docker')
         self.facts.check_dependencies
 
-        if 'docker' and '/usr/lib/systemd/systemd-timesyncd' not in self.facts.missing_dependencies:
+        if 'docker' not in self.facts.missing_dependencies and '/usr/lib/systemd/systemd-timesyncd' not in self.facts.missing_dependencies:
             if self.facts.missing_dependencies:
-                _exit(f"missing dependencies: {' ,'.join(self.facts.missing_dependencies)}", 1)
+                 _exit(f"missing dependencies: {' ,'.join(self.facts.missing_dependencies)}", 1)
         if 'docker' in self.facts.missing_dependencies:
             self.install_docker()
         if '/usr/lib/systemd/systemd-timesyncd' in self.facts.missing_dependencies:
