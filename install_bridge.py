@@ -263,6 +263,7 @@ class Facts:
                        f"-h {self.node_name} " \
                        f"-p 8081:8081 " \
                        f"-p 10300:10300 " \
+                       f"-p 45554:45554 " \
                        f"-e NTP_RETRY={self.ntp} " \
                        f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
                        f"-v {self.app_dir}/.data/keys/:/keys " \
@@ -280,6 +281,7 @@ class Facts:
                       f"--name {self.node_name} " \
                       f"-p 8081:8081 " \
                       f"-p 10300:10300 " \
+                      f"-p 45554:45554 " \
                       f"-e NTP_RETRY={self.ntp} " \
                       f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
                       f"-v {self.app_dir}/.data/keys/:/keys " \
@@ -298,6 +300,7 @@ class Facts:
                         f"-h {self.node_name} " \
                         f"-p 8081:8081 " \
                         f"-p 10300:10300 " \
+                        f"-p 45554:45554 " \
                         f"-e NTP_RETRY={self.ntp} " \
                         f"-e PROM_LISTEN_PORT={self.prometheus_port} " \
                         f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
@@ -317,6 +320,7 @@ class Facts:
                         f"-h {self.node_name} " \
                         f"-p 8081:8081 " \
                         f"-p 10300:10300 " \
+                        f"-p 45554:45554 " \
                         f"-e NTP_RETRY={self.ntp} " \
                         f"-e PROM_LISTEN_PORT={self.prometheus_port} " \
                         f"-e KEYSTORE_PASSWORD={self.keystore_password} " \
